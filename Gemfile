@@ -1,3 +1,5 @@
 source 'https://rubygems.org'
 gem 'sinatra'
 gem 'aws-sdk-s3', '~> 1'
+gem 'sequel'
+gem 'pg'
