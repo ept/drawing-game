@@ -30,6 +30,7 @@ __END__
 
 @@index
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-file-upload/10.13.1/js/jquery.fileupload.min.js"></script>
@@ -45,6 +46,10 @@ __END__
   padding-left: 0.2em;
   color:   white;
   display: none;
+}
+
+.image-display img {
+  width: 90%;
 }
 </style>
 
