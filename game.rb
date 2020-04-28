@@ -48,7 +48,7 @@ __END__
   display: none;
 }
 
-.image-display img {
+#image-display img {
   width: 90%;
 }
 </style>
