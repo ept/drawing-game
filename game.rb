@@ -154,7 +154,7 @@ __END__
 <p>Players:</p>
 <ul>
 <% @players.each do |player| %>
-  <li><a href="/players/<%= h player[:id] %>"><%= h player[:name] %></a></li>
+  <li><a href="/players/<%= h player[:id] %>">Play as <%= h player[:name] %></a></li>
 <% end %>
 </ul>
 <% if @first_round.empty? %>
@@ -234,7 +234,12 @@ __END__
   <% else %>
     <p><img src="<%= h @my_answer[:answer] %>" style="width: 100%"></p>
   <% end %>
-<% elsif @prev_answer || params[:round].to_i == 1 %>
+<% elsif @prev_answer.nil? && params[:round].to_i > 1 %>
+  <p>Waiting for <%= h @predecessor[:name] %> to come up with something.</p>
+<% elsif params[:round].to_i == @players.size + 1 %>
+  <p>This is the thread you started, which has now come back round to you.</p>
+  <p><a href="/games/<%= h @player[:game_id] %>/threads/<%= h params[:player_id].to_i %>">View the result!</a></p>
+<% else %>
   <% if params[:round].to_i == 1 %>
     <p>Please think of something that <%= h @successor[:name] %> should draw.</p>
   <% elsif params[:round].to_i.odd? %>
@@ -257,17 +262,15 @@ __END__
     <% end %>
   </form>
   <% if params[:round].to_i.even? %>
-    <form action="<%= @presigned.url %>" enctype="multipart/form-data" method="post" id="upload-form">
+    <form action="<%= h @presigned.url %>" enctype="multipart/form-data" method="post" id="upload-form">
       <% @presigned.fields.each do |name, value| %>
-        <input type="hidden" name="<%= name %>" value="<%= value %>"/>
+        <input type="hidden" name="<%= h name %>" value="<%= h value %>"/>
       <% end %>
       <p><input name="file" type="file" accept="image/jpeg" capture="environment" id="file-input"/></p>
       <p><input type="submit" value="submit"></p>
     </form>
   <% end %>
   <p>You're in round <%= h params[:round] %> of game <%= h DB[:games].where(id: @player[:game_id]).get(:name) %>.</p>
-<% else %>
-  <p>Waiting for <%= h @predecessor[:name] %> to come up with something.</p>
 <% end %>
 
 <div id="image-display"></div>
@@ -330,6 +333,7 @@ $(function() {
 @@thread
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<h3>Thread</h3>
 <p>This thread was started by <%= h @players[@thread.first[:player_id]] %>, who wrote:</p>
 <p><em><%= h @thread.first[:answer] %></em></p>
 <% @thread.slice(1, @thread.size - 1).each do |answer| %>
@@ -340,3 +344,12 @@ $(function() {
     <p><img src="<%= h answer[:answer] %>" width="100%"></p>
   <% end %>
 <% end %>
+<h3>Other threads</h3>
+<ul>
+<% @players.each do |player_id, player_name| %>
+  <% if player_id != params[:initiator_id].to_i %>
+    <li><a href="/games/<%= h params[:game_id].to_i %>/threads/<%= h player_id %>">Thread
+      started by <%= h player_name %></a></li>
+  <% end %>
+<% end %>
+</ul>
