@@ -30,6 +30,7 @@ DB.create_table? :answers do
   foreign_key :player_id,   :players, null: false
   Integer     :round,                 null: false
   String      :answer
+  DateTime    :created_at
   unique [:player_id, :round]
 end
 
@@ -109,6 +110,7 @@ post '/answers' do
     game_id:     params[:game_id],
     player_id:   params[:player_id],
     round:       params[:round],
+    created_at:  Time.now,
     answer:      params[:answer]
   )
   redirect to("/players/#{params[:player_id].to_i}/rounds/#{params[:round].to_i + 1}")
